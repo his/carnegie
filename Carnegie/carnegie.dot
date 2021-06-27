@@ -1,0 +1,321 @@
+digraph Carnegie {
+
+	graph [
+		rankdir = "LR"
+	];
+
+		
+/* Hauptentitäten */
+	
+	subgraph mainentities {
+		//rank = same;
+		Money [color=green];
+		Goods [color=blue];
+		Employees [color=orange];
+		Buildprojects;
+		Movements [color=orange];
+		Transportationlevels;
+		Researchprojects;
+		Mission [color=purple];
+		Charity [color=red];
+		Victorypoints [color=red];
+		Researchpoints [color=cornflowerblue];
+	}
+	
+/* Abteilungen (außer Siegpunktbeziehungen), Nummern aus Regeln, Startabteilungen haben keine Nummer. 
+ * Dicke der Beziehungen immer bezogen auf den Einsatz eines employees.
+ */
+
+	subgraph D_HR {
+
+		node [ fillcolor=lightblue, style=filled ];
+	
+		D_HR [label="HR|HR|3 Emp (1 always occupied)", shape=record];
+		D_HR -> Movements [label="3x", penwidth=3, color=orange];
+	
+		D1 [label="HR|Training and Partnerships|1 Emp 2$", shape=record];
+	    D1 -> Movements [label="8x", penwidth=8, color=orange]; 
+	    D1 -> Money [label="8$", penwidth=8, color=green]; 
+	    D1-> Mission [color=purple]; 
+	    
+		D2 [label="HR|Recruiting|1 Emp 1$", shape=record];
+	    D2 -> Employees [color=orange ];
+	    D2 -> Mission [color=purple];
+	    
+		D3 [label="HR|Safety and Quality|1 Emp $5", shape=record];
+		D3 -> Mission [color=purple];
+		D3 -> Victorypoints [color=red];
+	    
+		D4 [label="HR Continuous|New Lobby", shape=record];
+	    D4 -> Movements [color=orange,label="short ways"];
+	    
+    }
+
+	subgraph D_M {
+		
+		node [fillcolor=lightcoral, style=filled]
+		    
+		D_TC [label="Management|Trade&Commerce (higher value with mission)|3 Emp", shape=record];
+	    D_TC -> Goods [label="1x/2x", penwidth=1, color=blue];
+	    D_TC -> Money [label="3$/6$", penwidth=3, color=green];
+	    D_TC -> Mission [color=purple, label="optional"];
+	    
+		D_Planning [label="Management|Planning (build a dept)|3 Emp 5$", shape=record];
+		Goods -> D_Planning [label="1x/2x", color=blue];
+		    
+		    
+		D5 [label="Management|Purchasing|2 Emp", shape=record];
+	    D5 -> Goods [label="3x", penwidth=3, color=blue];
+	    D5 -> Mission [color=purple];
+	    
+		D6 [label="Management|Sales|2 Emp 1$", shape=record];
+	    D6 -> Money [label="5$ (1 to 3 times)", penwidth=5, color=green];
+	    Goods -> D6 [color=blue, label="1x-3x"];
+	    
+		D7 [label="Management|Logistics|2 Emp 3$", shape=record];
+	    D7 -> Money [color=green, penwidth=3, label="3$ (up to 3x)"];
+	    D7 -> Victorypoints [color=red, label="up to 3x"];	 
+	    Goods -> D7 [color=blue, label="up to 3x"];
+	
+		D8 [label="Management Continuous|Property Management|1 Emp 3$", shape=record];
+	    D8  -> Movements [color=orange, label="place emp on new dept"];
+	    
+	}
+    
+	subgraph D_C {
+		
+		node [fillcolor=lightcyan, style=filled]
+		    
+		D_C [label="Construction|Construction|3 Emp 1$", shape=record];
+	    D_C -> Buildprojects;
+	    Goods -> D_C [color=blue, label="1x/2x", penwidth=2];
+	    D_C -> Mission [color=purple];
+
+		D9 [label="Construction|Construction|3 Emp 1$", shape=record];
+	    D9 -> Buildprojects;
+	    Goods -> D9 [color=blue, label="1x even for expensive"];
+	    D9 -> Mission [color=purple];
+	    
+		D10 [label="Construction|Construction Outsourcing|1 Emp 3$", shape=record];
+	    D10 -> Buildprojects;
+	    Money -> D10 [label="4$", penwidth=4, color=green];
+	    Goods -> D10 [label="1x/2x", penwidth=2, color=blue];
+	    
+		D11 [label="Construction|Supply Chain|2 Emp $1", shape=record];
+	    D11 -> Goods [color=blue, label="up to 3x", penwidth=3];
+	    Money -> D11 [color=green, label ="up to 3x", penwidth=3];
+	    
+		D12 [label="Construction Continuous|Communications|1 Emp $5", shape=record];
+	    D12 -> Money [color=green, label="lowers charity costs"];
+	    D12 -> Charity [color=red, label="lowers charity costs"];
+	    
+    }
+
+	subgraph D_R {
+		
+		node [fillcolor=lightgoldenrod, style=filled]
+
+		D_RD [label="R&D|R&D|3 Emp 3$", shape=record];
+	    D_RD -> Researchpoints [label="3x", penwidth=3, color=cornflowerblue];
+		    
+		D13 [label="R&D|Advanced Research|1 Emp 3$", shape=record];
+	    D13 -> Researchpoints [label="8x", penwidth=8, color=cornflowerblue];
+	    D13 -> Mission [color=purple];
+	    
+		D14 [label="R&D|Advanced Design|3 Emp 3$", shape=record];
+	    D14 -> Researchpoints [label="4x", penwidth=4, color=cornflowerblue];
+	
+		D15 [label="R&D|Charitable Giving|1 Emp", shape=record];
+	    D15 -> Mission [color=purple];
+	    D15 -> Charity [color=red, label="repeat"];
+	    
+		D16 [label="R&D Continuous|Telegraph Operators|1 Emp $5", shape=record];
+	    D16 -> Transportationlevels [label="lowers dev cost"];
+	    
+    }
+    
+    Researchprojects -> Buildprojects [label="precondition"];
+    
+    Transportationlevels -> Employees [color=orange, label="may"];
+    Transportationlevels -> Goods [color=blue, label="may"];
+    Transportationlevels -> Money [color=green, label="may"];
+    Transportationlevels -> Researchpoints [color=cornflowerblue, label="only in midwest"];
+    
+    Buildprojects -> Employees [color=orange, label="may"];
+    Buildprojects -> Researchpoints [label="may", color=cornflowerblue];
+    
+    Mission -> Money [color=green, label="dep on transportlevel"];
+    Mission -> Goods [color=blue, label="dep on transportlevel"];
+    Mission -> Researchpoints [label="dep on transportlevel"];
+    
+    Researchpoints -> Researchprojects [color=cornflowerblue];
+    Researchpoints -> Transportationlevels [color=cornflowerblue];
+    
+    
+    
+
+//Comment from here to exclude charity (messes things up)
+/*
+
+	subgraph charity {
+		edge [color=red];
+		node [color=red];
+		
+	   
+	
+	// Spenden
+		subgraph single_charity {
+			rank = same;
+			S_Department_HR;
+			S_Department_M;
+			S_Department_C;
+			S_Department_R;
+			S_Department_All;
+		
+			S_Project_Public;
+			S_Project_Industry;
+			S_Project_HousingCommerce;
+			S_Transportationlevel;
+		
+			S_VP;
+			S_Goods;
+			S_Money;
+			S_GoodsAndMoney;
+			S_ActiveEmployee;
+		
+			S_East;
+			S_Midwest;
+			S_South;
+			S_West;
+			S_SmallTowns;
+		}
+		S_Donations;
+
+	// Spenden wirken sich natürlich auf die Spendenspende aus... 
+	
+		S_Department_HR  -> S_Donations;	
+		S_Department_M -> S_Donations;	
+		S_Department_C -> S_Donations;	
+		S_Department_R -> S_Donations;	
+		S_Department_All -> S_Donations;	
+	
+		S_Project_Public -> S_Donations;	
+		S_Project_Industry -> S_Donations;	
+		S_Project_HousingCommerce -> S_Donations;	
+		S_Transportationlevel -> S_Donations;	
+	
+		S_VP  -> S_Donations;	
+		S_Goods -> S_Donations;	
+		S_Money -> S_Donations;	
+		S_GoodsAndMoney -> S_Donations;
+		S_ActiveEmployee -> S_Donations;	
+	
+		S_East -> S_Donations;	
+		S_Midwest -> S_Donations;	
+		S_South -> S_Donations;	
+		S_West -> S_Donations;	
+		S_SmallTowns -> S_Donations;	
+		
+	// Alle Spenden produzieren Siegpunkte
+		S_Department_HR -> Victorypoints;
+		S_Department_M -> Victorypoints;
+		S_Department_C -> Victorypoints;
+		S_Department_R -> Victorypoints;
+		S_Department_All -> Victorypoints;
+	
+		S_Project_Public -> Victorypoints;
+		S_Project_Industry -> Victorypoints;
+		S_Project_HousingCommerce -> Victorypoints;
+		S_Transportationlevel -> Victorypoints;
+		S_Donations -> Victorypoints;
+	
+		S_VP -> Victorypoints;
+		S_Goods -> Victorypoints;
+		S_Money -> Victorypoints;
+		S_GoodsAndMoney -> Victorypoints;
+		S_ActiveEmployee -> Victorypoints;
+	
+		S_East -> Victorypoints;
+		S_Midwest -> Victorypoints;
+		S_South -> Victorypoints;
+		S_West -> Victorypoints;
+		S_SmallTowns -> Victorypoints;
+		
+	// Weitere Siegpunktproduktionen
+	    Employees -> Victorypoints;
+	    Buildprojects -> Victorypoints;
+	    Researchprojects -> Victorypoints;
+		
+	// Bauprojekte wirken sich auf die Spenden in der Region oder dem Typ aus.
+		
+		Buildprojects -> S_Project_Public;
+		Buildprojects -> S_Project_Industry;
+		Buildprojects -> S_Project_HousingCommerce;
+		
+		Buildprojects -> S_East;
+		Buildprojects -> S_Midwest;
+		Buildprojects -> S_South;
+		Buildprojects -> S_West;
+		Buildprojects -> S_SmallTowns;
+	
+	
+	// Department-Spendenwirkungen
+	    D_HR -> S_Department_HR;
+	    D_HR -> S_Department_All;
+	    D_TC -> S_Department_M;
+	    D_TC -> S_Department_All;
+	    D_Planning -> S_Department_M;
+	    D_Planning -> S_Department_All;
+    	D_C -> S_Department_C;
+	    D_C -> S_Department_All;
+	    D_RD -> S_Department_R;
+	    D_RD -> S_Department_All;
+	    D1 -> S_Department_HR;
+	    D1 -> S_Department_All;
+	    D2 -> S_Department_HR;
+	    D2 -> S_Department_All;
+	    D3 -> Victorypoints;
+	    D3 -> S_Department_HR;
+	    D3 -> S_Department_All;
+	    D4 -> S_Department_HR;
+	    D4 -> S_Department_All;
+	    D5 -> S_Department_M;
+	    D5 -> S_Department_All;
+	    D6 -> S_Department_M;    
+	    D6 -> S_Department_All;
+	    D7 -> S_Department_M;
+	    D7 -> S_Department_All;
+	    D7 -> Victorypoints;
+	    D8 -> S_Department_M;
+	    D8 -> S_Department_All;
+	    D9 -> S_Department_C;
+	    D9 -> S_Department_All;
+	    D10 -> S_Department_C;
+	    D10 -> S_Department_All;
+	    D11 -> S_Department_C;
+	    D11 -> S_Department_All;
+	    D12 -> S_Department_C;
+	    D12 -> S_Department_All;
+	    D13 -> S_Department_R;
+	    D13 -> S_Department_All;
+	    D14 -> S_Department_R;
+	    D14 -> S_Department_All;
+	    D15 -> S_Department_R;
+	    D15 -> S_Department_All;
+	    D16 -> S_Department_R;
+	    D16 -> S_Department_All;
+		
+	// Weitere Spendenwirkungen
+	
+		Transportationlevels -> S_Transportationlevel;
+		Goods -> S_Goods;
+		Money -> S_Money;
+		
+		Goods -> S_GoodsAndMoney;
+		Money -> S_GoodsAndMoney;
+		
+		Employees -> S_ActiveEmployee;
+	}
+ */
+
+}
